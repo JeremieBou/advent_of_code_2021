@@ -2,29 +2,28 @@ defmodule PlayBingo do
   def prepare_cards(card_strings) do
     card_strings
     |> Enum.map(fn card ->
-        String.split(card, "\n")
-        |> Enum.map(fn row ->
-          String.trim(row)
-          |> String.split(" ")
-          |> Enum.filter(fn x -> x != "" end)
-          |> Enum.map(fn cell ->
-            cell
-            |> Integer.parse()
-            |> elem(0)
-          end)
-
+      String.split(card, "\n")
+      |> Enum.map(fn row ->
+        String.trim(row)
+        |> String.split(" ")
+        |> Enum.filter(fn x -> x != "" end)
+        |> Enum.map(fn cell ->
+          cell
+          |> Integer.parse()
+          |> elem(0)
         end)
       end)
+    end)
   end
 
   def prepare_numbers(number_strings) do
     number_strings
-      |> String.split(",")
-      |> Enum.map(fn number_string ->
-        number_string
-        |> Integer.parse()
-        |> elem(0)
-      end)
+    |> String.split(",")
+    |> Enum.map(fn number_string ->
+      number_string
+      |> Integer.parse()
+      |> elem(0)
+    end)
   end
 
   def map_card_cells(card, map_fn) do
@@ -54,17 +53,18 @@ defmodule PlayBingo do
     num_columns = length(Enum.at(card, 0))
 
     card
-      |> Enum.any?(fn row ->
-        row
-        |> Enum.all?(fn cell ->
-          cell === -1
-        end)
-      end) or Enum.to_list(0..num_columns)
+    |> Enum.any?(fn row ->
+      row
+      |> Enum.all?(fn cell ->
+        cell === -1
+      end)
+    end) or
+      Enum.to_list(0..num_columns)
       |> Enum.any?(fn column_index ->
         card
-          |> Enum.all?(fn row ->
-            Enum.at(row, column_index) == -1
-          end)
+        |> Enum.all?(fn row ->
+          Enum.at(row, column_index) == -1
+        end)
       end)
   end
 
@@ -81,12 +81,13 @@ defmodule PlayBingo do
   def play_game([next_number | numbers], cards) do
     played_cards = play_number(cards, next_number)
 
-    winning_card = played_cards
+    winning_card =
+      played_cards
       |> Enum.find(fn card ->
         winner?(card)
       end)
 
-    if winning_card === :nil do
+    if winning_card === nil do
       play_game(numbers, played_cards)
     else
       score_card(winning_card, next_number)
@@ -96,9 +97,10 @@ defmodule PlayBingo do
   def play_loosing_game([next_number | numbers], cards) do
     played_cards = play_number(cards, next_number)
 
-    remaining_cards = Enum.filter(played_cards, fn card ->
-      !winner?(card)
-    end)
+    remaining_cards =
+      Enum.filter(played_cards, fn card ->
+        !winner?(card)
+      end)
 
     if length(remaining_cards) === 0 do
       score_card(Enum.at(played_cards, 0), next_number)
@@ -106,7 +108,6 @@ defmodule PlayBingo do
       play_loosing_game(numbers, remaining_cards)
     end
   end
-
 
   def play_bingo(filename) do
     {:ok, file} = File.read(filename)
