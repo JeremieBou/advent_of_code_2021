@@ -69,8 +69,7 @@ defmodule DetectBigHyrothermalVents do
     |> Enum.group_by(fn point ->
       point
     end)
-    |> Enum.filter(fn {_key, value} -> length(value) >= 2 end)
-    |> Enum.count()
+    |> Enum.count(fn {_key, value} -> length(value) >= 2 end)
   end
 end
 
