@@ -10,7 +10,7 @@ defmodule LanternFishGrowth do
   def calculate_lantern_fish(lantern_fish, days) do
     new_fish = Map.get(lantern_fish, 0)
 
-    next_fish1 =
+    next_fish =
       lantern_fish
       |> Enum.map(fn {fish_timer, count} ->
         if fish_timer === 0 do
@@ -19,7 +19,7 @@ defmodule LanternFishGrowth do
           {fish_timer - 1, count}
         end
       end)
-      |> Enum.group_by(fn {fish_timer, count} -> fish_timer end)
+      |> Enum.group_by(fn {fish_timer, _count} -> fish_timer end)
       |> Enum.map(fn {fish_timer, counts} ->
         count =
           counts
@@ -31,9 +31,6 @@ defmodule LanternFishGrowth do
         {fish_timer, count}
       end)
       |> Kernel.++([{8, new_fish}])
-
-    next_fish =
-      next_fish1
       |> Enum.into(%{})
 
     calculate_lantern_fish(next_fish, days - 1)
